@@ -1,0 +1,29 @@
+body {
+	padding-top:32px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor:default;
+}
+
+.navbar {
+  background-color:#8D1010;
+  -webkit-app-region:drag;
+}
+.title {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+div.modal-body {
+  color: black;
+}
+
+div.modal-title {
+  color: black;
+}
+::-webkit-scrollbar {
+    display: none;
+}
