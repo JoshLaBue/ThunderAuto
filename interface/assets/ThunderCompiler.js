@@ -12,9 +12,12 @@ function compile(steps) {
   }
   addLine('#ifndef ' + stringName.toUpperCase() + '_H_');
   addLine('#define ' + stringName.toUpperCase() + '_H_');
+  addLine('');
   addLine('void ' + stringName + '() {');
     var stepIndex = 0;
+    var needIndex = true;
     for(var i = 0; i<steps.length; i++) {
+      needIndex = true;
       addLine('\tif(autoStep == ' + stepIndex + ') {');
       if(steps[i].type == 'Drive') {
         if(steps[i].params[0] == 'Vision') {
@@ -30,18 +33,26 @@ function compile(steps) {
         if(steps[i].action == 'Open') {
           addLine('\t\t_gear->Extend_Flippers();');
           addLine('\t\tif(_timer.Get() > 1) {');
-          addLine('\t\t\tautoStep++');
+          addLine('\t\t\tautoStep++;');
           addLine('\t\t}');
+          stepIndex++;
+          needIndex = false;
         }
         if(steps[i].action == 'Close') addLine('\t\t_gear->Retract_Flippers();');
       }
       if(steps[i].type == 'Turn') {
-        addLine('\t\t_drive->Auto_Pivot_Turn(' + steps[i].angle + ')');
+        addLine('\t\t_drive->Auto_Pivot_Turn(' + steps[i].angle + ');');
         addLine('\t\t_timer.Reset();');
       }
-      addLine('\t\tautoStep++;');
+      if(needIndex == true) {
+        addLine('\t\tautoStep++;');
+        stepIndex++;
+      }
+      if(i == steps.length-1) {
+        addLine('\t\tfinished = true;');
+      }
       addLine('\t}');
-      stepIndex++;
+
       if(steps[i].type == 'Drive') {
         if(steps[i].params[1] == 'Turn') addStepConfirmation('\t', 'Is_Auto_Turn_Finished()', stepIndex, 0);
         else addStepConfirmation('\t', 'Is_Auto_Straight_Finished()', stepIndex, 0);
@@ -79,9 +90,14 @@ function downloadSource(content) {
   var a = document.createElement('a');
   var file = new Blob([content], {type:' text/plain'});
   a.href = URL.createObjectURL(file);
-  var name;
-  if(document.getElementById('modeName').value == '') name = 'AutoMode'
-  else name = document.getElementById('modeName').value;
+  var name = '';
+  if(document.getElementById('modeName').value == '') name = 'AutoMode';
+  else {
+    nameArray = document.getElementById('modeName').value.split(' ');
+    for(var i = 0; i<nameArray.length; i++) {
+      name = name + nameArray[i];
+    }
+  }
   a.download = name + '.h';
   a.click();
 }
