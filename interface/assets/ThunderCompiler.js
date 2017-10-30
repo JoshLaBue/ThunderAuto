@@ -10,6 +10,8 @@ function compile(steps) {
     stringName = stringName + name[i];
     if(i<name.length-1) stringName = stringName + '_'
   }
+  addLine('#ifndef ' + stringName.toUpperCase() + '_H_');
+  addLine('#define ' + stringName.toUpperCase() + '_H_');
   addLine('void ' + stringName + '() {');
     var stepIndex = 0;
     for(var i = 0; i<steps.length; i++) {
@@ -51,6 +53,8 @@ function compile(steps) {
       }
     }
   addLine('}');
+  addLine('');
+  addLine('#endif');
   console.log('Compiled with output ' + output);
   downloadSource(output);
   document.getElementById('listAlert').innerHTML = '<div class="alert alert-success" id="loadAlert" role="alert">Compilation Successful!</div>';
@@ -78,6 +82,6 @@ function downloadSource(content) {
   var name;
   if(document.getElementById('modeName').value == '') name = 'AutoMode'
   else name = document.getElementById('modeName').value;
-  a.download = name + '.cpp';
+  a.download = name + '.h';
   a.click();
 }
